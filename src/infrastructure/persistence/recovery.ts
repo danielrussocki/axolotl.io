@@ -14,6 +14,10 @@ export interface RestoreProgressResult {
   notification: Message | null
 }
 
+interface RestoredProgressWithTimestamp extends RestoreProgressResult {
+  savedAtMs: number | null
+}
+
 export interface SaveProgressResult {
   snapshot: PersistedSnapshot
   notification: Message | null
@@ -30,17 +34,30 @@ export const createInitialGameState = (): GameState => ({
  * interrumpan la sesión actual.
  */
 export const restoreGameStateSafely = async (persistence: PersistencePort): Promise<RestoreProgressResult> => {
+  const { state, notification } = await restoreGameStateWithTimestamp(persistence)
+
+  return { state, notification }
+}
+
+/** Recupera además la marca temporal necesaria para reanudar el reloj de juego. */
+export const restoreGameStateWithTimestamp = async (
+  persistence: PersistencePort,
+): Promise<RestoredProgressWithTimestamp> => {
   try {
     const persistedValue = await persistence.load()
 
     if (persistedValue === null) {
-      return { state: createInitialGameState(), notification: null }
+      return { state: createInitialGameState(), notification: null, savedAtMs: null }
     }
 
     const snapshot = migratePersistedSnapshot(parsePersistedValue(persistedValue))
 
     if (snapshot !== null) {
-      return { state: normalizeInterruptedActions(restoreGameState(snapshot)), notification: null }
+      return {
+        state: normalizeInterruptedActions(restoreGameState(snapshot)),
+        notification: null,
+        savedAtMs: snapshot.savedAtMs,
+      }
     }
   } catch {
     // El almacenamiento puede estar bloqueado o contener JSON ilegible.
@@ -49,6 +66,7 @@ export const restoreGameStateSafely = async (persistence: PersistencePort): Prom
   return {
     state: createInitialGameState(),
     notification: { key: 'progress-invalid' },
+    savedAtMs: null,
   }
 }
 

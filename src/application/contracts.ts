@@ -9,7 +9,9 @@ export type ActionCommand = {
 
 export type GameCommand =
   | ActionCommand
-  | { type: 'reset'; keepPendingActions: boolean }
+  | { type: 'reset' }
+  | { type: 'confirmReset'; keepPendingActions: boolean }
+  | { type: 'cancelReset' }
   | { type: 'setQueueLimit'; limit: number }
   | { type: 'setQueueVisibility'; isVisible: boolean }
   | { type: 'setMusicEnabled'; isEnabled: boolean }

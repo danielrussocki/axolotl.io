@@ -168,7 +168,9 @@ openSession():
 | `pet` | `id`, `createdAtMs`, `source` | Añade caricia a la cola. |
 | `play` | `id`, `createdAtMs`, `source` | Añade minijuego; espera si falta energía. |
 | `sleep` | `id`, `createdAtMs`, `source` | Alterna descanso al llegar a su turno. |
-| `reset` | `keepPendingActions` | Solicita confirmación y reinicia solo al confirmar. |
+| `reset` | Sin datos adicionales | Solicita confirmación sin modificar el progreso. |
+| `confirmReset` | `keepPendingActions` | Reinicia solo después de la confirmación y permite conservar las acciones pendientes. |
+| `cancelReset` | Sin datos adicionales | Cancela la solicitud y conserva el progreso sin cambios. |
 | `setQueueLimit` | `limit` entre 0 y 200 | Actualiza límite y descarta las acciones más próximas si es necesario. |
 | `setQueueVisibility` | `isVisible` | Muestra u oculta la lista sin detenerla. |
 | `setMusicEnabled` | `isEnabled` | Cambia música solo durante la sesión. |

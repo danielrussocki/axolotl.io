@@ -84,15 +84,15 @@ Las tareas están ordenadas por dependencia. Cada una está pensada para complet
 
 ## Controlador y mensajes
 
-- [ ] **T34. Implementar el catálogo de mensajes en español.** RF: RF-1, RF-3, RF-4, RF-5.  
+- [x] **T34. Implementar el catálogo de mensajes en español.** RF: RF-1, RF-3, RF-4, RF-5.  
   **Hecho cuando:** existen mensajes para acciones, sueño, energía insuficiente, cola desactivada, descarte, datos inválidos, guardado fallido y sesión bloqueada.
-- [ ] **T35. Implementar el controlador de juego y el ciclo de procesamiento.** RF: RF-1 a RF-6.  
+- [x] **T35. Implementar el controlador de juego y el ciclo de procesamiento.** RF: RF-1 a RF-6.  
   **Hecho cuando:** el controlador conecta comandos, dominio, cola, mensajes y persistencia sin introducir reglas de mascota fuera del dominio.
-- [ ] **T36. Conectar el controlador al reloj y a los cambios de visibilidad.** RF: RF-4, RF-6.  
+- [x] **T36. Conectar el controlador al reloj y a los cambios de visibilidad.** RF: RF-4, RF-6.  
   **Hecho cuando:** al volver a primer plano se aplica el tiempo transcurrido antes de aceptar nuevas acciones.
-- [ ] **T37. Implementar el flujo de reinicio confirmado o cancelado.** RF: RF-5, RF-6.  
+- [x] **T37. Implementar el flujo de reinicio confirmado o cancelado.** RF: RF-5, RF-6.  
   **Hecho cuando:** el reinicio permite conservar cola, restaura valores iniciales y reinicia límite a 20 y visibilidad a mostrada.
-- [ ] **T38. Probar controlador, reinicio y avisos.** RF: RF-1, RF-3, RF-4, RF-5, RF-6.  
+- [x] **T38. Probar controlador, reinicio y avisos.** RF: RF-1, RF-3, RF-4, RF-5, RF-6.  
   **Hecho cuando:** las pruebas verifican efectos, persistencia, cancelación, ambas opciones de reinicio y mensajes resultantes.
 
 ## Render jugable y audio
