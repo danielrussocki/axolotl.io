@@ -4,11 +4,13 @@ Las tareas están ordenadas por dependencia. Cada una está pensada para complet
 
 ## Preparación y pruebas
 
-- [ ] **T01. Solicitar y registrar la aprobación para añadir el runner de pruebas propuesto.** RF: RF-1, RF-4, RF-5, RF-6.  
+- [x] **T01. Solicitar y registrar la aprobación para añadir el runner de pruebas propuesto.** RF: RF-1, RF-4, RF-5, RF-6.  
   **Hecho cuando:** la aprobación queda registrada antes de modificar dependencias.
-- [ ] **T02. Añadir y verificar el runner de pruebas aprobado.** RF: RF-1, RF-4, RF-5, RF-6.  
+
+  **Registro de aprobación:** 2026-10-17 — La persona usuaria aprobó añadir Vitest como dependencia de desarrollo en T02. Esta tarea no modifica dependencias ni configura el runner.
+- [x] **T02. Añadir y verificar el runner de pruebas aprobado.** RF: RF-1, RF-4, RF-5, RF-6.  
   **Hecho cuando:** existe un comando de tests que ejecuta una prueba mínima correctamente.
-- [ ] **T03. Crear los contratos de tipos del dominio y de comandos.** RF: RF-1, RF-4, RF-5, RF-6.  
+- [x] **T03. Crear los contratos de tipos del dominio y de comandos.** RF: RF-1, RF-4, RF-5, RF-6.  
   **Hecho cuando:** existen tipos para estado de mascota, acción, cola, resultado, mensaje y puertos, sin importar interfaz ni navegador.
 
 ## Dominio de mascota y tiempo

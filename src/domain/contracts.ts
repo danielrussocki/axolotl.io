@@ -1,0 +1,42 @@
+/** Estado de las cuatro necesidades que regulan las reglas de Mochi. */
+export interface PetNeeds {
+  hunger: number
+  happiness: number
+  cleanliness: number
+  energy: number
+}
+
+/** Estado persistible de la mascota, independiente de cualquier adaptador. */
+export interface PetState {
+  needs: PetNeeds
+  isSleeping: boolean
+  needsCleaning: boolean
+  hungrySinceMs: number | null
+}
+
+export type ActionType = 'feed' | 'clean' | 'pet' | 'play' | 'sleep'
+
+/** Origen validado de una solicitud de acción. */
+export type ActionSource = 'local' | 'live'
+
+export type QueuedActionStatus = 'pending' | 'executing' | 'waiting-energy'
+
+export interface QueuedAction {
+  id: string
+  type: ActionType
+  createdAtMs: number
+  source: ActionSource
+  status: QueuedActionStatus
+}
+
+export interface ActionQueue {
+  limit: number
+  isVisible: boolean
+  items: QueuedAction[]
+}
+
+/** Instantánea mínima que comparten el dominio y los adaptadores. */
+export interface GameState {
+  pet: PetState
+  queue: ActionQueue
+}
