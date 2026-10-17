@@ -63,23 +63,23 @@ Las tareas están ordenadas por dependencia. Cada una está pensada para complet
 
 ## Persistencia, migración y sesión
 
-- [ ] **T25. Definir el formato persistido versionado y su validación.** RF: RF-4.  
+- [x] **T25. Definir el formato persistido versionado y su validación.** RF: RF-4.  
   **Hecho cuando:** el formato contiene versión, mascota, cola, preferencias y marca temporal, con validación de rango y estructura.
-- [ ] **T26. Implementar serialización y restauración de estado.** RF: RF-1, RF-4.  
+- [x] **T26. Implementar serialización y restauración de estado.** RF: RF-1, RF-4.  
   **Hecho cuando:** se restauran necesidades, descanso, limpieza pendiente, cola, límite y visibilidad de cola.
-- [ ] **T27. Implementar migración de formatos compatibles.** RF: RF-4.  
+- [x] **T27. Implementar migración de formatos compatibles.** RF: RF-4.  
   **Hecho cuando:** una instantánea de versión anterior compatible se transforma a la versión actual sin perder datos compatibles.
-- [ ] **T28. Implementar recuperación ante datos inválidos y fallos de guardado.** RF: RF-4.  
+- [x] **T28. Implementar recuperación ante datos inválidos y fallos de guardado.** RF: RF-4.  
   **Hecho cuando:** datos corruptos restauran un estado seguro con aviso y un fallo de guardado permite continuar la sesión con aviso.
-- [ ] **T29. Normalizar acciones interrumpidas al restaurar.** RF: RF-1, RF-4.  
+- [x] **T29. Normalizar acciones interrumpidas al restaurar.** RF: RF-1, RF-4.  
   **Hecho cuando:** una acción que quedó en ejecución se recupera como pendiente y vuelve a procesarse.
-- [ ] **T30. Probar persistencia, migraciones y fallos de almacenamiento.** RF: RF-1, RF-4.  
+- [x] **T30. Probar persistencia, migraciones y fallos de almacenamiento.** RF: RF-1, RF-4.  
   **Hecho cuando:** las pruebas cubren guardar/restaurar, migrar, JSON inválido, almacenamiento bloqueado y acción interrumpida.
-- [ ] **T31. Implementar bloqueo de sesión única.** RF: RF-4.  
+- [x] **T31. Implementar bloqueo de sesión única.** RF: RF-4.  
   **Hecho cuando:** una segunda pestaña no puede jugar y muestra el aviso de sesión activa.
-- [ ] **T32. Implementar el comportamiento de recarga manual de la pestaña bloqueada.** RF: RF-4.  
+- [x] **T32. Implementar el comportamiento de recarga manual de la pestaña bloqueada.** RF: RF-4.  
   **Hecho cuando:** cerrar la sesión principal no activa la pestaña bloqueada hasta que se recarga manualmente.
-- [ ] **T33. Probar bloqueo y liberación de sesión.** RF: RF-4.  
+- [x] **T33. Probar bloqueo y liberación de sesión.** RF: RF-4.  
   **Hecho cuando:** las pruebas verifican sesión principal, segunda pestaña bloqueada y requisito de recarga manual.
 
 ## Controlador y mensajes

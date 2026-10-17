@@ -49,6 +49,7 @@ Se persistirá una instantánea versionada. Los efectos visuales efímeros, posi
 
 Reglas del formato:
 - `formatVersion` es obligatorio y cada cambio incompatible incorpora una migración explícita.
+- La versión 0, con la misma estructura de progreso que la versión 1, es compatible: se conserva todo su contenido y se actualiza su marca a la versión 1 antes de validarla. Las demás versiones sin migración registrada se rechazan.
 - `limit` está entre 0 y 200; su valor inicial es 20. `isVisible` inicia en `true`.
 - `needsCleaning` es una condición única; nunca se persisten posiciones ni contadores de suciedad.
 - Los valores de necesidades se validan y limitan entre 0 y 100 antes de usar o guardar.
