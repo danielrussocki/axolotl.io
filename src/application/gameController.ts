@@ -13,11 +13,12 @@ import {
   restoreGameStateWithTimestamp,
   saveGameStateSafely,
 } from '../infrastructure/persistence/recovery'
-import type { ActionCommand, ClockPort, GameCommand, GameEffect, GameResult, Message, PersistencePort } from './contracts'
+import type { ActionCommand, AudioPort, ClockPort, GameCommand, GameEffect, GameResult, Message, PersistencePort } from './contracts'
 
 export interface GameControllerOptions {
   persistence: PersistencePort
   clock: ClockPort
+  audio?: AudioPort
 }
 
 interface ProcessingResult {
@@ -35,14 +36,22 @@ export class GameController {
   private activeMinigame: MinigameState | null = null
   private readonly persistence: PersistencePort
   private readonly clock: ClockPort
+  private readonly audio: AudioPort | null
   private lastProgressMs: number
   private isResetConfirmationPending = false
   private foregroundUpdate: Promise<void> = Promise.resolve()
   private readonly unsubscribeFromForeground: () => void
 
-  private constructor(persistence: PersistencePort, clock: ClockPort, state: GameState, lastProgressMs: number) {
+  private constructor(
+    persistence: PersistencePort,
+    clock: ClockPort,
+    audio: AudioPort | undefined,
+    state: GameState,
+    lastProgressMs: number,
+  ) {
     this.persistence = persistence
     this.clock = clock
+    this.audio = audio ?? null
     this.state = state
     this.lastProgressMs = lastProgressMs
     this.unsubscribeFromForeground = clock.onForeground(() => {
@@ -57,6 +66,7 @@ export class GameController {
     const controller = new GameController(
       options.persistence,
       options.clock,
+      options.audio,
       restored.state,
       restored.savedAtMs ?? currentTimeMs,
     )
@@ -67,6 +77,8 @@ export class GameController {
     if (hadRestoredActions || appliedElapsedTime) {
       await saveGameStateSafely(options.persistence, controller.state, controller.lastProgressMs)
     }
+
+    await controller.startMusic()
 
     return controller
   }
@@ -132,7 +144,11 @@ export class GameController {
       return this.saveAndCreateResult(null, [], [])
     }
 
-    // El adaptador de audio se implementa en una tarea posterior.
+    if (command.type === 'setMusicEnabled') {
+      const audioFailed = command.isEnabled ? await this.startMusic() : await this.stopMusic()
+      return this.createResult(null, audioFailed ? [{ key: 'audio-unavailable' }] : [], [])
+    }
+
     return this.createResult(null, [], [])
   }
 
@@ -235,8 +251,14 @@ export class GameController {
     effects: GameEffect[],
   ): Promise<GameResult> {
     const saved = await saveGameStateSafely(this.persistence, this.state, this.lastProgressMs)
+    const audioFailed = await this.playEffects(effects)
+    const audioNotifications = audioFailed ? [{ key: 'audio-unavailable' } satisfies Message] : []
 
-    return this.createResult(message, saved.notification === null ? notifications : [...notifications, saved.notification], effects)
+    return this.createResult(
+      message,
+      saved.notification === null ? [...notifications, ...audioNotifications] : [...notifications, saved.notification, ...audioNotifications],
+      effects,
+    )
   }
 
   private createResult(message: Message | null, notifications: Message[], effects: GameEffect[]): GameResult {
@@ -288,6 +310,28 @@ export class GameController {
     this.lastProgressMs = currentTimeMs
 
     return true
+  }
+
+  private async startMusic(): Promise<boolean> {
+    return this.runAudio(() => this.audio?.startMusic())
+  }
+
+  private async stopMusic(): Promise<boolean> {
+    return this.runAudio(() => this.audio?.stopMusic())
+  }
+
+  private async playEffects(effects: GameEffect[]): Promise<boolean> {
+    const results = await Promise.all(effects.map((effect) => this.runAudio(() => this.audio?.playEffect(effect.type))))
+    return results.some(Boolean)
+  }
+
+  private async runAudio(operation: () => Promise<void> | undefined): Promise<boolean> {
+    try {
+      await operation()
+      return false
+    } catch {
+      return true
+    }
   }
 }
 
