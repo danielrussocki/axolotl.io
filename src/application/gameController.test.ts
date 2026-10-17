@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { GameController } from './gameController'
-import type { ClockPort, PersistencePort } from './contracts'
+import type { AudioPort, ClockPort, PersistencePort } from './contracts'
 
 const createPersistence = (loadedSnapshot: unknown = null): PersistencePort & { savedSnapshots: unknown[] } => {
   const savedSnapshots: unknown[] = []
@@ -44,7 +44,52 @@ const createClock = (currentTimeMs: number): ClockPort & { setTime: (timeMs: num
   }
 }
 
+const createAudio = (): AudioPort & { startCalls: number; stopCalls: number } => ({
+  startCalls: 0,
+  stopCalls: 0,
+  startMusic: async function () {
+    this.startCalls += 1
+  },
+  stopMusic: async function () {
+    this.stopCalls += 1
+  },
+  playEffect: async () => {},
+})
+
 describe('GameController', () => {
+  it('inicia la música en una sesión nueva y la controla durante la sesión', async () => {
+    const audio = createAudio()
+    const controller = await GameController.create({
+      persistence: createPersistence(),
+      clock: createClock(1_000),
+      audio,
+    })
+
+    await controller.dispatch({ type: 'setMusicEnabled', isEnabled: false })
+    await controller.dispatch({ type: 'setMusicEnabled', isEnabled: true })
+
+    expect(audio.startCalls).toBe(2)
+    expect(audio.stopCalls).toBe(1)
+  })
+
+  it('sigue procesando acciones cuando el navegador bloquea el audio', async () => {
+    const blockedAudio: AudioPort = {
+      startMusic: async () => Promise.reject(new Error('Autoplay bloqueado')),
+      stopMusic: async () => Promise.reject(new Error('Audio no disponible')),
+      playEffect: async () => Promise.reject(new Error('Audio no disponible')),
+    }
+    const controller = await GameController.create({
+      persistence: createPersistence(),
+      clock: createClock(1_000),
+      audio: blockedAudio,
+    })
+
+    const result = await controller.dispatch({ type: 'feed', id: 'feed-1', createdAtMs: 1_000, source: 'local' })
+
+    expect(result.state.pet.needs).toMatchObject({ hunger: 100, cleanliness: 77 })
+    expect(result.effects).toEqual([{ type: 'feed', actionId: 'feed-1' }])
+  })
+
   it('reanuda el procesamiento de las acciones pendientes restauradas', async () => {
     const persistence = createPersistence({
       formatVersion: 1,

@@ -55,6 +55,11 @@
       "source": "antfu/skills",
       "sourceType": "autoskills-registry",
       "computedHash": "9b57a2fff4dbb3c38e7f2e511f4125784f11cd67f54e89d3e7d9c57fe5834bd5"
+    },
+    "vitest": {
+      "source": "antfu/skills",
+      "sourceType": "autoskills-registry",
+      "computedHash": "bbb3d22f611fb721b9b475f014b323882732dc3f724e0f3de229c38795d77e8f"
     }
   }
 }

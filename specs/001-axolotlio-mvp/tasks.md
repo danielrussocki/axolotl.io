@@ -97,19 +97,21 @@ Las tareas están ordenadas por dependencia. Cada una está pensada para complet
 
 ## Render jugable y audio
 
-- [ ] **T39. Solicitar y registrar la aprobación para añadir PixiJS.** RF: RF-1, RF-2.  
+- [x] **T39. Solicitar y registrar la aprobación para añadir PixiJS.** RF: RF-1, RF-2.  
   **Hecho cuando:** la aprobación queda registrada antes de modificar dependencias.
-- [ ] **T40. Añadir PixiJS y crear el contenedor de ciclo de vida de la escena.** RF: RF-1, RF-2.  
+
+  **Registro de aprobación:** 2026-10-17 — La persona usuaria aprobó añadir PixiJS como dependencia de producción en T40 para implementar el canvas jugable. T39 no modifica dependencias ni configura PixiJS.
+- [x] **T40. Añadir PixiJS y crear el contenedor de ciclo de vida de la escena.** RF: RF-1, RF-2.  
   **Hecho cuando:** la escena se crea y destruye sin dejar listeners ni ciclos de render activos.
-- [ ] **T41. Dibujar habitación y Mochi en reposo.** RF: RF-1.  
+- [x] **T41. Dibujar habitación y Mochi en reposo.** RF: RF-1.  
   **Hecho cuando:** la escena representa habitación y mascota con el estilo funcional equivalente, sin requisito píxel a píxel.
-- [ ] **T42. Representar estados de Mochi, partículas y suciedad.** RF: RF-1, RF-6.  
+- [x] **T42. Representar estados de Mochi, partículas y suciedad.** RF: RF-1, RF-6.  
   **Hecho cuando:** la escena refleja dormir, enfermo, triste, sucio, comiendo y normal con su prioridad correcta.
-- [ ] **T43. Conectar pulsación y táctil sobre Mochi con el comando de caricia.** RF: RF-2.  
+- [x] **T43. Conectar pulsación y táctil sobre Mochi con el comando de caricia.** RF: RF-2.  
   **Hecho cuando:** una única pulsación o toque fuera del minijuego encola una sola caricia.
-- [ ] **T44. Implementar interacción visual del minijuego.** RF: RF-1, RF-2, RF-6.  
+- [x] **T44. Implementar interacción visual del minijuego.** RF: RF-1, RF-2, RF-6.  
   **Hecho cuando:** ratón y táctil mueven a Mochi, se capturan corazones y al terminar vuelve a reposo mostrando el resultado.
-- [ ] **T45. Implementar el adaptador de audio tolerante a fallos.** RF: RF-3.  
+- [x] **T45. Implementar el adaptador de audio tolerante a fallos.** RF: RF-3.  
   **Hecho cuando:** la música inicia activada en una sesión nueva, se controla durante la sesión y un bloqueo de audio no impide jugar.
 
 ## Interfaz reactiva
