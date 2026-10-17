@@ -42,23 +42,23 @@ Las tareas están ordenadas por dependencia. Cada una está pensada para complet
 
 ## Dominio de minijuego y cola
 
-- [ ] **T16. Definir estado y transiciones del minijuego.** RF: RF-1, RF-2, RF-6.  
+- [x] **T16. Definir estado y transiciones del minijuego.** RF: RF-1, RF-2, RF-6.  
   **Hecho cuando:** el dominio inicia un minijuego de cinco segundos, registra corazones y lo resuelve al terminar.
-- [ ] **T17. Implementar efectos de iniciar y ganar corazones.** RF: RF-2, RF-6.  
+- [x] **T17. Implementar efectos de iniciar y ganar corazones.** RF: RF-2, RF-6.  
   **Hecho cuando:** jugar modifica felicidad, energía y hambre; cada corazón suma 3 de felicidad.
-- [ ] **T18. Probar minijuego, falta de energía y regreso de segundo plano.** RF: RF-1, RF-2, RF-6.  
+- [x] **T18. Probar minijuego, falta de energía y regreso de segundo plano.** RF: RF-1, RF-2, RF-6.  
   **Hecho cuando:** las pruebas cubren duración, captura, mínimo de 12 de energía y resolución por tiempo transcurrido.
-- [ ] **T19. Crear operaciones básicas de cola.** RF: RF-1.  
+- [x] **T19. Crear operaciones básicas de cola.** RF: RF-1.  
   **Hecho cuando:** se pueden añadir, marcar y retirar acciones con estados pendiente, en ejecución y en espera por energía.
-- [ ] **T20. Implementar límite configurable y cola desactivada.** RF: RF-1.  
+- [x] **T20. Implementar límite configurable y cola desactivada.** RF: RF-1.  
   **Hecho cuando:** la cola acepta límites de 0 a 200, inicia en 20 y rechaza nuevas acciones con límite 0.
-- [ ] **T21. Implementar desborde y reducción del límite.** RF: RF-1.  
+- [x] **T21. Implementar desborde y reducción del límite.** RF: RF-1.  
   **Hecho cuando:** al llenarse o reducirse el límite se descartan primero las acciones más próximas a ejecutarse y se informa cuál fue eliminada.
-- [ ] **T22. Implementar selección de la siguiente acción procesable.** RF: RF-1, RF-6.  
+- [x] **T22. Implementar selección de la siguiente acción procesable.** RF: RF-1, RF-6.  
   **Hecho cuando:** la cola mantiene el orden, espera animaciones/minijuegos y puede omitir temporalmente un juego sin energía para ejecutar acciones independientes.
-- [ ] **T23. Implementar despertar previo a acciones no relacionadas con descanso.** RF: RF-1.  
+- [x] **T23. Implementar despertar previo a acciones no relacionadas con descanso.** RF: RF-1.  
   **Hecho cuando:** una acción distinta de Dormir despierta a Mochi antes de ejecutarse.
-- [ ] **T24. Probar todas las reglas de cola.** RF: RF-1, RF-6.  
+- [x] **T24. Probar todas las reglas de cola.** RF: RF-1, RF-6.  
   **Hecho cuando:** las pruebas cubren orden, límite 0, límite 200, desborde, reducción, espera por energía, omisión temporal y despertar automático.
 
 ## Persistencia, migración y sesión

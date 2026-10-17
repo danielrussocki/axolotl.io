@@ -38,6 +38,17 @@ export interface ActionQueue {
   items: QueuedAction[]
 }
 
+/** Estado efímero de un minijuego activo; no forma parte del progreso persistido. */
+export interface MinigameState {
+  startedAtMs: number
+  capturedHearts: number
+}
+
+/** Resultado del minijuego disponible al finalizar su duración. */
+export interface MinigameResult {
+  capturedHearts: number
+}
+
 /** Instantánea mínima que comparten el dominio y los adaptadores. */
 export interface GameState {
   pet: PetState

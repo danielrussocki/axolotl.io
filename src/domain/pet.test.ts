@@ -4,6 +4,8 @@ import {
   applyClean,
   applyDirt,
   applyFeed,
+  applyHeart,
+  applyPlay,
   applyPetNeedRates,
   applyPet,
   createInitialPetState,
@@ -208,6 +210,81 @@ describe('descanso de Mochi', () => {
       ...pet,
       isSleeping: false,
     })
+  })
+})
+
+describe('minijuego de Mochi', () => {
+  it('aumenta la felicidad en 25 y reduce energía en 15 y hambre en 8 al iniciarlo', () => {
+    const pet = {
+      needs: {
+        hunger: 50,
+        happiness: 64,
+        cleanliness: 35,
+        energy: 71,
+      },
+      isSleeping: false,
+      needsCleaning: true,
+      hungrySinceMs: 500,
+    }
+
+    expect(applyPlay(pet)).toEqual({
+      needs: {
+        hunger: 42,
+        happiness: 89,
+        cleanliness: 35,
+        energy: 56,
+      },
+      isSleeping: false,
+      needsCleaning: true,
+      hungrySinceMs: 500,
+    })
+    expect(pet.needs).toEqual({
+      hunger: 50,
+      happiness: 64,
+      cleanliness: 35,
+      energy: 71,
+    })
+  })
+
+  it('respeta los límites al iniciar el minijuego', () => {
+    const pet = {
+      ...createInitialPetState(),
+      needs: {
+        hunger: 5,
+        happiness: 90,
+        cleanliness: 35,
+        energy: 10,
+      },
+    }
+
+    expect(applyPlay(pet).needs).toEqual({
+      hunger: 0,
+      happiness: 100,
+      cleanliness: 35,
+      energy: 0,
+    })
+  })
+
+  it('aumenta la felicidad en 3 por cada corazón capturado sin alterar el resto', () => {
+    const pet = {
+      ...createInitialPetState(),
+      needs: {
+        hunger: 42,
+        happiness: 64,
+        cleanliness: 35,
+        energy: 71,
+      },
+    }
+
+    expect(applyHeart(pet)).toMatchObject({
+      needs: {
+        hunger: 42,
+        happiness: 67,
+        cleanliness: 35,
+        energy: 71,
+      },
+    })
+    expect(applyHeart({ ...pet, needs: { ...pet.needs, happiness: 99 } }).needs.happiness).toBe(100)
   })
 })
 

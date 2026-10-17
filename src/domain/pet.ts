@@ -76,6 +76,26 @@ export const applyPet = (pet: PetState): PetState => ({
   }),
 })
 
+/** Aplica los efectos de iniciar el minijuego sin mutar el estado original. */
+export const applyPlay = (pet: PetState): PetState => ({
+  ...pet,
+  needs: normalizePetNeeds({
+    ...pet.needs,
+    hunger: pet.needs.hunger - 8,
+    happiness: pet.needs.happiness + 25,
+    energy: pet.needs.energy - 15,
+  }),
+})
+
+/** Aplica la recompensa de un corazón atrapado sin mutar el estado original. */
+export const applyHeart = (pet: PetState): PetState => ({
+  ...pet,
+  needs: normalizePetNeeds({
+    ...pet.needs,
+    happiness: pet.needs.happiness + 3,
+  }),
+})
+
 /** Genera suciedad una única vez mientras Mochi está despierto. */
 export const applyDirt = (pet: PetState): PetState => {
   if (pet.isSleeping || pet.needsCleaning) {
