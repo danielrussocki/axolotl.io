@@ -15,29 +15,29 @@ Las tareas están ordenadas por dependencia. Cada una está pensada para complet
 
 ## Dominio de mascota y tiempo
 
-- [ ] **T04. Definir el estado inicial y la normalización de necesidades.** RF: RF-6.  
+- [x] **T04. Definir el estado inicial y la normalización de necesidades.** RF: RF-6.  
   **Hecho cuando:** el dominio crea hambre 78, felicidad 86, limpieza 82 y energía 75, siempre limitadas entre 0 y 100.
-- [ ] **T05. Probar el estado inicial y los límites de necesidades.** RF: RF-6.  
+- [x] **T05. Probar el estado inicial y los límites de necesidades.** RF: RF-6.  
   **Hecho cuando:** las pruebas verifican valores iniciales y que ningún valor sale del rango 0–100.
-- [ ] **T06. Implementar la regla de alimentar.** RF: RF-6.  
+- [x] **T06. Implementar la regla de alimentar.** RF: RF-6.  
   **Hecho cuando:** alimentar suma 30 de hambre y resta 5 de limpieza respetando límites.
-- [ ] **T07. Implementar las reglas de limpiar y acariciar.** RF: RF-6.  
+- [x] **T07. Implementar las reglas de limpiar y acariciar.** RF: RF-6.  
   **Hecho cuando:** limpiar suma 40 de limpieza, 5 de felicidad y elimina suciedad; acariciar suma 15 de felicidad.
-- [ ] **T08. Probar las reglas de alimentar, limpiar y acariciar.** RF: RF-6.  
+- [x] **T08. Probar las reglas de alimentar, limpiar y acariciar.** RF: RF-6.  
   **Hecho cuando:** las pruebas cubren efectos normales y saturación en los límites.
-- [ ] **T09. Implementar el descanso y su alternancia.** RF: RF-1, RF-6.  
+- [x] **T09. Implementar el descanso y su alternancia.** RF: RF-1, RF-6.  
   **Hecho cuando:** la acción Dormir duerme a Mochi si está despierto y lo despierta si está dormido.
-- [ ] **T10. Implementar deterioro y recuperación por segundo.** RF: RF-4, RF-6.  
+- [x] **T10. Implementar deterioro y recuperación por segundo.** RF: RF-4, RF-6.  
   **Hecho cuando:** el dominio aplica las cuatro tasas despierto y las cuatro tasas dormido definidas en la especificación.
-- [ ] **T11. Implementar despertar automático y hambre prolongada.** RF: RF-6.  
+- [x] **T11. Implementar despertar automático y hambre prolongada.** RF: RF-6.  
   **Hecho cuando:** Mochi despierta al alcanzar 98 de energía y se marca enfermo tras 30 segundos con hambre en cero.
-- [ ] **T12. Implementar suciedad, estados visuales y prioridad.** RF: RF-1, RF-6.  
+- [x] **T12. Implementar suciedad, estados visuales y prioridad.** RF: RF-1, RF-6.  
   **Hecho cuando:** se genera una única necesidad de limpieza, se aplican sus penalizaciones y la prioridad visual coincide con la especificación.
-- [ ] **T13. Probar deterioro, descanso, suciedad, enfermedad y prioridades.** RF: RF-1, RF-4, RF-6.  
+- [x] **T13. Probar deterioro, descanso, suciedad, enfermedad y prioridades.** RF: RF-1, RF-4, RF-6.  
   **Hecho cuando:** las pruebas cubren tasas, umbrales, suciedad y los seis niveles de prioridad visual.
-- [ ] **T14. Implementar el cálculo de tiempo transcurrido.** RF: RF-4, RF-6.  
+- [x] **T14. Implementar el cálculo de tiempo transcurrido.** RF: RF-4, RF-6.  
   **Hecho cuando:** el dominio limita el cálculo a 24 horas y aplica cero deterioro ante tiempo negativo.
-- [ ] **T15. Probar ausencias, segundo plano y reloj negativo.** RF: RF-4, RF-6.  
+- [x] **T15. Probar ausencias, segundo plano y reloj negativo.** RF: RF-4, RF-6.  
   **Hecho cuando:** las pruebas cubren ausencias normales, 24 horas, más de 24 horas y reloj que retrocede.
 
 ## Dominio de minijuego y cola

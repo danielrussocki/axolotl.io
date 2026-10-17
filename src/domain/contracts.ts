@@ -14,6 +14,9 @@ export interface PetState {
   hungrySinceMs: number | null
 }
 
+/** Apariencia calculada de Mochi, ordenada por las reglas de prioridad. */
+export type PetVisualState = 'sleeping' | 'sick' | 'sad' | 'dirty' | 'eating' | 'normal'
+
 export type ActionType = 'feed' | 'clean' | 'pet' | 'play' | 'sleep'
 
 /** Origen validado de una solicitud de acción. */
