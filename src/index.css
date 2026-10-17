@@ -1,0 +1,9 @@
+@import "tailwindcss";
+
+.pixel-font {
+  font-family: 'Press Start 2P', monospace
+}
+
+canvas {
+  image-rendering: pixelated
+}
