@@ -1,0 +1,137 @@
+# Tareas 001: experiencia jugable de Mochi
+
+Las tareas están ordenadas por dependencia. Cada una está pensada para completarse en un máximo de 20–30 minutos.
+
+## Preparación y pruebas
+
+- [ ] **T01. Solicitar y registrar la aprobación para añadir el runner de pruebas propuesto.** RF: RF-1, RF-4, RF-5, RF-6.  
+  **Hecho cuando:** la aprobación queda registrada antes de modificar dependencias.
+- [ ] **T02. Añadir y verificar el runner de pruebas aprobado.** RF: RF-1, RF-4, RF-5, RF-6.  
+  **Hecho cuando:** existe un comando de tests que ejecuta una prueba mínima correctamente.
+- [ ] **T03. Crear los contratos de tipos del dominio y de comandos.** RF: RF-1, RF-4, RF-5, RF-6.  
+  **Hecho cuando:** existen tipos para estado de mascota, acción, cola, resultado, mensaje y puertos, sin importar interfaz ni navegador.
+
+## Dominio de mascota y tiempo
+
+- [ ] **T04. Definir el estado inicial y la normalización de necesidades.** RF: RF-6.  
+  **Hecho cuando:** el dominio crea hambre 78, felicidad 86, limpieza 82 y energía 75, siempre limitadas entre 0 y 100.
+- [ ] **T05. Probar el estado inicial y los límites de necesidades.** RF: RF-6.  
+  **Hecho cuando:** las pruebas verifican valores iniciales y que ningún valor sale del rango 0–100.
+- [ ] **T06. Implementar la regla de alimentar.** RF: RF-6.  
+  **Hecho cuando:** alimentar suma 30 de hambre y resta 5 de limpieza respetando límites.
+- [ ] **T07. Implementar las reglas de limpiar y acariciar.** RF: RF-6.  
+  **Hecho cuando:** limpiar suma 40 de limpieza, 5 de felicidad y elimina suciedad; acariciar suma 15 de felicidad.
+- [ ] **T08. Probar las reglas de alimentar, limpiar y acariciar.** RF: RF-6.  
+  **Hecho cuando:** las pruebas cubren efectos normales y saturación en los límites.
+- [ ] **T09. Implementar el descanso y su alternancia.** RF: RF-1, RF-6.  
+  **Hecho cuando:** la acción Dormir duerme a Mochi si está despierto y lo despierta si está dormido.
+- [ ] **T10. Implementar deterioro y recuperación por segundo.** RF: RF-4, RF-6.  
+  **Hecho cuando:** el dominio aplica las cuatro tasas despierto y las cuatro tasas dormido definidas en la especificación.
+- [ ] **T11. Implementar despertar automático y hambre prolongada.** RF: RF-6.  
+  **Hecho cuando:** Mochi despierta al alcanzar 98 de energía y se marca enfermo tras 30 segundos con hambre en cero.
+- [ ] **T12. Implementar suciedad, estados visuales y prioridad.** RF: RF-1, RF-6.  
+  **Hecho cuando:** se genera una única necesidad de limpieza, se aplican sus penalizaciones y la prioridad visual coincide con la especificación.
+- [ ] **T13. Probar deterioro, descanso, suciedad, enfermedad y prioridades.** RF: RF-1, RF-4, RF-6.  
+  **Hecho cuando:** las pruebas cubren tasas, umbrales, suciedad y los seis niveles de prioridad visual.
+- [ ] **T14. Implementar el cálculo de tiempo transcurrido.** RF: RF-4, RF-6.  
+  **Hecho cuando:** el dominio limita el cálculo a 24 horas y aplica cero deterioro ante tiempo negativo.
+- [ ] **T15. Probar ausencias, segundo plano y reloj negativo.** RF: RF-4, RF-6.  
+  **Hecho cuando:** las pruebas cubren ausencias normales, 24 horas, más de 24 horas y reloj que retrocede.
+
+## Dominio de minijuego y cola
+
+- [ ] **T16. Definir estado y transiciones del minijuego.** RF: RF-1, RF-2, RF-6.  
+  **Hecho cuando:** el dominio inicia un minijuego de cinco segundos, registra corazones y lo resuelve al terminar.
+- [ ] **T17. Implementar efectos de iniciar y ganar corazones.** RF: RF-2, RF-6.  
+  **Hecho cuando:** jugar modifica felicidad, energía y hambre; cada corazón suma 3 de felicidad.
+- [ ] **T18. Probar minijuego, falta de energía y regreso de segundo plano.** RF: RF-1, RF-2, RF-6.  
+  **Hecho cuando:** las pruebas cubren duración, captura, mínimo de 12 de energía y resolución por tiempo transcurrido.
+- [ ] **T19. Crear operaciones básicas de cola.** RF: RF-1.  
+  **Hecho cuando:** se pueden añadir, marcar y retirar acciones con estados pendiente, en ejecución y en espera por energía.
+- [ ] **T20. Implementar límite configurable y cola desactivada.** RF: RF-1.  
+  **Hecho cuando:** la cola acepta límites de 0 a 200, inicia en 20 y rechaza nuevas acciones con límite 0.
+- [ ] **T21. Implementar desborde y reducción del límite.** RF: RF-1.  
+  **Hecho cuando:** al llenarse o reducirse el límite se descartan primero las acciones más próximas a ejecutarse y se informa cuál fue eliminada.
+- [ ] **T22. Implementar selección de la siguiente acción procesable.** RF: RF-1, RF-6.  
+  **Hecho cuando:** la cola mantiene el orden, espera animaciones/minijuegos y puede omitir temporalmente un juego sin energía para ejecutar acciones independientes.
+- [ ] **T23. Implementar despertar previo a acciones no relacionadas con descanso.** RF: RF-1.  
+  **Hecho cuando:** una acción distinta de Dormir despierta a Mochi antes de ejecutarse.
+- [ ] **T24. Probar todas las reglas de cola.** RF: RF-1, RF-6.  
+  **Hecho cuando:** las pruebas cubren orden, límite 0, límite 200, desborde, reducción, espera por energía, omisión temporal y despertar automático.
+
+## Persistencia, migración y sesión
+
+- [ ] **T25. Definir el formato persistido versionado y su validación.** RF: RF-4.  
+  **Hecho cuando:** el formato contiene versión, mascota, cola, preferencias y marca temporal, con validación de rango y estructura.
+- [ ] **T26. Implementar serialización y restauración de estado.** RF: RF-1, RF-4.  
+  **Hecho cuando:** se restauran necesidades, descanso, limpieza pendiente, cola, límite y visibilidad de cola.
+- [ ] **T27. Implementar migración de formatos compatibles.** RF: RF-4.  
+  **Hecho cuando:** una instantánea de versión anterior compatible se transforma a la versión actual sin perder datos compatibles.
+- [ ] **T28. Implementar recuperación ante datos inválidos y fallos de guardado.** RF: RF-4.  
+  **Hecho cuando:** datos corruptos restauran un estado seguro con aviso y un fallo de guardado permite continuar la sesión con aviso.
+- [ ] **T29. Normalizar acciones interrumpidas al restaurar.** RF: RF-1, RF-4.  
+  **Hecho cuando:** una acción que quedó en ejecución se recupera como pendiente y vuelve a procesarse.
+- [ ] **T30. Probar persistencia, migraciones y fallos de almacenamiento.** RF: RF-1, RF-4.  
+  **Hecho cuando:** las pruebas cubren guardar/restaurar, migrar, JSON inválido, almacenamiento bloqueado y acción interrumpida.
+- [ ] **T31. Implementar bloqueo de sesión única.** RF: RF-4.  
+  **Hecho cuando:** una segunda pestaña no puede jugar y muestra el aviso de sesión activa.
+- [ ] **T32. Implementar el comportamiento de recarga manual de la pestaña bloqueada.** RF: RF-4.  
+  **Hecho cuando:** cerrar la sesión principal no activa la pestaña bloqueada hasta que se recarga manualmente.
+- [ ] **T33. Probar bloqueo y liberación de sesión.** RF: RF-4.  
+  **Hecho cuando:** las pruebas verifican sesión principal, segunda pestaña bloqueada y requisito de recarga manual.
+
+## Controlador y mensajes
+
+- [ ] **T34. Implementar el catálogo de mensajes en español.** RF: RF-1, RF-3, RF-4, RF-5.  
+  **Hecho cuando:** existen mensajes para acciones, sueño, energía insuficiente, cola desactivada, descarte, datos inválidos, guardado fallido y sesión bloqueada.
+- [ ] **T35. Implementar el controlador de juego y el ciclo de procesamiento.** RF: RF-1 a RF-6.  
+  **Hecho cuando:** el controlador conecta comandos, dominio, cola, mensajes y persistencia sin introducir reglas de mascota fuera del dominio.
+- [ ] **T36. Conectar el controlador al reloj y a los cambios de visibilidad.** RF: RF-4, RF-6.  
+  **Hecho cuando:** al volver a primer plano se aplica el tiempo transcurrido antes de aceptar nuevas acciones.
+- [ ] **T37. Implementar el flujo de reinicio confirmado o cancelado.** RF: RF-5, RF-6.  
+  **Hecho cuando:** el reinicio permite conservar cola, restaura valores iniciales y reinicia límite a 20 y visibilidad a mostrada.
+- [ ] **T38. Probar controlador, reinicio y avisos.** RF: RF-1, RF-3, RF-4, RF-5, RF-6.  
+  **Hecho cuando:** las pruebas verifican efectos, persistencia, cancelación, ambas opciones de reinicio y mensajes resultantes.
+
+## Render jugable y audio
+
+- [ ] **T39. Solicitar y registrar la aprobación para añadir PixiJS.** RF: RF-1, RF-2.  
+  **Hecho cuando:** la aprobación queda registrada antes de modificar dependencias.
+- [ ] **T40. Añadir PixiJS y crear el contenedor de ciclo de vida de la escena.** RF: RF-1, RF-2.  
+  **Hecho cuando:** la escena se crea y destruye sin dejar listeners ni ciclos de render activos.
+- [ ] **T41. Dibujar habitación y Mochi en reposo.** RF: RF-1.  
+  **Hecho cuando:** la escena representa habitación y mascota con el estilo funcional equivalente, sin requisito píxel a píxel.
+- [ ] **T42. Representar estados de Mochi, partículas y suciedad.** RF: RF-1, RF-6.  
+  **Hecho cuando:** la escena refleja dormir, enfermo, triste, sucio, comiendo y normal con su prioridad correcta.
+- [ ] **T43. Conectar pulsación y táctil sobre Mochi con el comando de caricia.** RF: RF-2.  
+  **Hecho cuando:** una única pulsación o toque fuera del minijuego encola una sola caricia.
+- [ ] **T44. Implementar interacción visual del minijuego.** RF: RF-1, RF-2, RF-6.  
+  **Hecho cuando:** ratón y táctil mueven a Mochi, se capturan corazones y al terminar vuelve a reposo mostrando el resultado.
+- [ ] **T45. Implementar el adaptador de audio tolerante a fallos.** RF: RF-3.  
+  **Hecho cuando:** la música inicia activada en una sesión nueva, se controla durante la sesión y un bloqueo de audio no impide jugar.
+
+## Interfaz reactiva
+
+- [ ] **T46. Sustituir la integración actual por el estado del controlador.** RF: RF-1, RF-3.  
+  **Hecho cuando:** controles, indicadores y mensaje muestran la instantánea reactiva del juego sin duplicar reglas.
+- [ ] **T47. Implementar indicadores y resaltado de necesidades bajas.** RF: RF-3.  
+  **Hecho cuando:** cada necesidad igual o menor que 20 resalta su indicador y el control asociado correcto.
+- [ ] **T48. Implementar controles de acciones y de música.** RF: RF-1, RF-3.  
+  **Hecho cuando:** cada control emite un único comando y el control de música respeta la elección durante la sesión.
+- [ ] **T49. Implementar lista, visibilidad y configuración de cola.** RF: RF-1, RF-4.  
+  **Hecho cuando:** la lista inicia visible, muestra tipo y estado de cada acción, puede ocultarse sin detenerse y conserva preferencia y límite.
+- [ ] **T50. Implementar diálogo y controles de reinicio.** RF: RF-5, RF-6.  
+  **Hecho cuando:** el diálogo permite cancelar, reiniciar borrando cola o reiniciar conservándola.
+- [ ] **T51. Implementar pantalla de sesión bloqueada y avisos de recuperación.** RF: RF-3, RF-4.  
+  **Hecho cuando:** la segunda pestaña no permite jugar y los avisos de datos/guardado se muestran en español.
+
+## Verificación final
+
+- [ ] **T52. Añadir pruebas de integración de interfaz para puntero y táctil.** RF: RF-1, RF-2, RF-3, RF-5.  
+  **Hecho cuando:** las pruebas verifican caricia, minijuego, indicadores, cola, música y reinicio desde la interfaz.
+- [ ] **T53. Ejecutar la matriz completa de pruebas especificada.** RF: RF-1 a RF-6.  
+  **Hecho cuando:** todas las suites de dominio, persistencia, sesión e interfaz pasan.
+- [ ] **T54. Ejecutar lint, comprobación de tipos y build de producción.** RF: RF-1 a RF-6.  
+  **Hecho cuando:** `pnpm lint` y `pnpm build` finalizan sin errores.
+- [ ] **T55. Revisar trazabilidad documental antes de cerrar.** RF: RF-1 a RF-6.  
+  **Hecho cuando:** `spec.md`, `plan.md`, `tasks.md` y las pruebas reflejan el comportamiento finalmente entregado.
