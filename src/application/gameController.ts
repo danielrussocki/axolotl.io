@@ -41,6 +41,8 @@ export class GameController {
   private isResetConfirmationPending = false
   private foregroundUpdate: Promise<void> = Promise.resolve()
   private readonly unsubscribeFromForeground: () => void
+  private readonly listeners = new Set<(result: GameResult) => void>()
+  private readonly initialNotifications: Message[]
 
   private constructor(
     persistence: PersistencePort,
@@ -48,12 +50,14 @@ export class GameController {
     audio: AudioPort | undefined,
     state: GameState,
     lastProgressMs: number,
+    initialNotifications: Message[],
   ) {
     this.persistence = persistence
     this.clock = clock
     this.audio = audio ?? null
     this.state = state
     this.lastProgressMs = lastProgressMs
+    this.initialNotifications = initialNotifications
     this.unsubscribeFromForeground = clock.onForeground(() => {
       this.foregroundUpdate = this.applyForegroundProgress()
     })
@@ -69,6 +73,7 @@ export class GameController {
       options.audio,
       restored.state,
       restored.savedAtMs ?? currentTimeMs,
+      restored.notification === null ? [] : [restored.notification],
     )
     const appliedElapsedTime = controller.applyElapsedTime(currentTimeMs)
     const hadRestoredActions = controller.state.queue.items.length > 0
@@ -86,6 +91,17 @@ export class GameController {
   /** Devuelve una instantánea que los adaptadores pueden representar sin mutarla. */
   getState(): GameState {
     return this.state
+  }
+
+  /** Expone avisos de recuperación producidos antes de que la interfaz se suscriba. */
+  getInitialNotifications(): readonly Message[] {
+    return this.initialNotifications
+  }
+
+  /** Permite a los adaptadores reaccionar a resultados sin conocer reglas. */
+  subscribe(listener: (result: GameResult) => void): () => void {
+    this.listeners.add(listener)
+    return () => this.listeners.delete(listener)
   }
 
   /** Expone el minijuego temporal para el adaptador de escena. */
@@ -262,7 +278,9 @@ export class GameController {
   }
 
   private createResult(message: Message | null, notifications: Message[], effects: GameEffect[]): GameResult {
-    return { state: this.state, message, notifications, effects }
+    const result = { state: this.state, message, notifications, effects }
+    this.listeners.forEach((listener) => listener(result))
+    return result
   }
 
   /** Aplica el tiempo ausente y resuelve el minijuego antes de procesar la cola. */
@@ -284,6 +302,7 @@ export class GameController {
       this.lastProgressMs = currentTimeMs
       this.processQueue()
       await saveGameStateSafely(this.persistence, this.state, this.lastProgressMs)
+      this.createResult(null, [], [])
       return
     }
 
@@ -293,6 +312,7 @@ export class GameController {
 
     this.processQueue()
     await saveGameStateSafely(this.persistence, this.state, this.lastProgressMs)
+    this.createResult(null, [], [])
   }
 
   /** Delega el deterioro al dominio y conserva una marca temporal válida. */

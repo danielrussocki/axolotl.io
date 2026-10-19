@@ -8,6 +8,7 @@ export type PetPointerTarget = {
 export interface PetInteractionOptions {
   dispatch: (command: ActionCommand) => void | Promise<unknown>
   isMinigameActive: () => boolean
+  onPetRequested?: () => void
   now?: () => number
   createActionId?: () => string
 }
@@ -36,6 +37,7 @@ export function bindPetInteraction(
       source: 'local',
     })
 
+    options.onPetRequested?.()
     void Promise.resolve(dispatchResult).catch(() => undefined)
   }
 

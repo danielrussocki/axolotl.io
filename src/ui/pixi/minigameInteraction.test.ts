@@ -51,7 +51,7 @@ describe('minigame visual interaction', () => {
     }
 
     expect(createMinigameVisualState(state)).toMatchObject({
-      mochiPosition: { x: 240, y: 174 },
+      mochiPosition: { x: 240, y: 160 },
       hearts: [],
     })
   })

@@ -51,6 +51,20 @@ describe('bindPetInteraction', () => {
     expect(dispatch).not.toHaveBeenCalled()
   })
 
+  it('notifica a la escena para iniciar el rebote visual de la caricia', () => {
+    const target = createTarget()
+    const onPetRequested = vi.fn()
+
+    bindPetInteraction(target, {
+      dispatch: vi.fn(),
+      isMinigameActive: () => false,
+      onPetRequested,
+    })
+    target.emit()
+
+    expect(onPetRequested).toHaveBeenCalledOnce()
+  })
+
   it('retira el listener al destruir la escena', () => {
     const target = createTarget()
     const dispatch = vi.fn()

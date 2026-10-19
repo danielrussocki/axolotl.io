@@ -17,7 +17,7 @@ Mochi es una mascota virtual que las personas pueden alimentar, limpiar, acarici
 ## Requisitos funcionales
 
 ### RF-1. Experiencia jugable equivalente
-- Cuando la persona abra el juego, el sistema deberá mostrar a Mochi, la habitación, las animaciones y los efectos visuales con una experiencia equivalente a la actual, sin exigir equivalencia visual píxel a píxel.
+- Cuando la persona abra el juego, el sistema deberá mostrar a Mochi, la habitación, las animaciones y los efectos visuales con una experiencia equivalente a la actual y con la fidelidad visual definida en RF-7.
 - Cuando una persona solicite alimentar, limpiar, acariciar, hacer jugar o cambiar el descanso de Mochi, el sistema deberá encolar la acción para procesarla en orden de llegada.
 - El sistema deberá permitir que cualquier persona configure desde la interfaz el límite de acciones pendientes de la cola entre 0 y 200 acciones, con un valor predeterminado de 20.
 - Si el límite de acciones pendientes es 0, el sistema deberá rechazar las nuevas acciones hasta que la persona configure un límite mayor que 0.
@@ -97,8 +97,18 @@ Mochi es una mascota virtual que las personas pueden alimentar, limpiar, acarici
 - Cuando coincidan varios estados visuales, el sistema deberá aplicar este orden de prioridad: durmiendo, enfermo, triste, sucio, comiendo y normal.
 - Cuando Mochi esté despierto y fuera del minijuego, el sistema deberá generar una suciedad pendiente entre 45 y 90 segundos después de la anterior, reducir la limpieza en 12 y reducir la felicidad en 6.
 
+### RF-7. Fidelidad visual del diseño de referencia
+- El diseño de referencia normativo será la escena original implementada en React con Canvas 2D en el commit `001a993`, en las funciones `drawMochi` y `drawRoomPattern` de `src/App.tsx`.
+- La escena PixiJS deberá conservar la identidad visual pixel art de Mochi: silueta escalonada, proporciones, orejas, tres branquias por lado, ojos, mejillas, boca, vientre y sombra deberán corresponder al diseño de referencia y no reinterpretarse como una mascota de formas redondeadas genéricas.
+- La habitación deberá conservar la composición y los detalles del diseño de referencia: pared decorada, ventana, planta, repisa, suelo, líneas y alfombra, incluidos sus colores y posiciones relativas en el área lógica de 480 × 320.
+- En reposo, la escena deberá conservar las animaciones visibles de referencia, incluidos el balanceo de Mochi, el parpadeo y el movimiento de las branquias. Al acariciar a Mochi, deberá reproducir el rebote temporal de la referencia durante 600 ms; los estados de dormir, comer, triste, enfermo y sucio deberán mantener esa misma identidad visual.
+- Las partículas, la suciedad y el minijuego deberán usar el mismo lenguaje pixel art y no sustituir la silueta o composición base de Mochi por una alternativa visual distinta.
+- La fidelidad se verificará comparando la escena PixiJS con la referencia en el estado normal y en cada estado visual. Se admitirán diferencias técnicas imperceptibles propias del renderer, pero no cambios reconocibles de silueta, estilo, proporciones, composición o animaciones.
+- Cualquier cambio intencional al diseño de referencia requerirá actualizar esta especificación y contar con aprobación explícita antes de implementarse.
+
 ## Requisitos no funcionales
 - La experiencia deberá poder usarse con ratón y con interacción táctil.
+- La escena jugable deberá conservar la fidelidad visual del diseño de referencia definida en RF-7 tanto en desarrollo como en la compilación de producción.
 - La información y los mensajes visibles deberán estar en español.
 - Las acciones deberán procesarse de forma secuencial y en orden de llegada mediante una cola.
 - El estado persistido deberá poder evolucionar sin invalidar el progreso ya guardado.
@@ -126,6 +136,7 @@ Mochi es una mascota virtual que las personas pueden alimentar, limpiar, acarici
 
 ## Criterios de finalización
 - Todas las acciones, animaciones, efectos y controles actuales funcionan de forma equivalente con ratón y táctil.
+- Mochi, la habitación, los estados, las partículas y el minijuego conservan la silueta, el pixel art, la composición y las animaciones del diseño de referencia según RF-7.
 - Las reglas de juego, valores iniciales, efectos de acciones, umbrales y duraciones definidos en RF-6 se cumplen.
 - Los indicadores y mensajes reflejan cada acción procesada sin recargar la página.
 - El progreso se recupera al volver y el tiempo ausente afecta las necesidades según los requisitos.

@@ -116,26 +116,97 @@ Las tareas están ordenadas por dependencia. Cada una está pensada para complet
 
 ## Interfaz reactiva
 
-- [ ] **T46. Sustituir la integración actual por el estado del controlador.** RF: RF-1, RF-3.  
+- [x] **T46. Sustituir la integración actual por el estado del controlador.** RF: RF-1, RF-3.  
   **Hecho cuando:** controles, indicadores y mensaje muestran la instantánea reactiva del juego sin duplicar reglas.
-- [ ] **T47. Implementar indicadores y resaltado de necesidades bajas.** RF: RF-3.  
+- [x] **T47. Implementar indicadores y resaltado de necesidades bajas.** RF: RF-3.  
   **Hecho cuando:** cada necesidad igual o menor que 20 resalta su indicador y el control asociado correcto.
-- [ ] **T48. Implementar controles de acciones y de música.** RF: RF-1, RF-3.  
+- [x] **T48. Implementar controles de acciones y de música.** RF: RF-1, RF-3.  
   **Hecho cuando:** cada control emite un único comando y el control de música respeta la elección durante la sesión.
-- [ ] **T49. Implementar lista, visibilidad y configuración de cola.** RF: RF-1, RF-4.  
+- [x] **T49. Implementar lista, visibilidad y configuración de cola.** RF: RF-1, RF-4.  
   **Hecho cuando:** la lista inicia visible, muestra tipo y estado de cada acción, puede ocultarse sin detenerse y conserva preferencia y límite.
-- [ ] **T50. Implementar diálogo y controles de reinicio.** RF: RF-5, RF-6.  
+- [x] **T50. Implementar diálogo y controles de reinicio.** RF: RF-5, RF-6.  
   **Hecho cuando:** el diálogo permite cancelar, reiniciar borrando cola o reiniciar conservándola.
-- [ ] **T51. Implementar pantalla de sesión bloqueada y avisos de recuperación.** RF: RF-3, RF-4.  
+- [x] **T51. Implementar pantalla de sesión bloqueada y avisos de recuperación.** RF: RF-3, RF-4.  
   **Hecho cuando:** la segunda pestaña no permite jugar y los avisos de datos/guardado se muestran en español.
 
 ## Verificación final
 
-- [ ] **T52. Añadir pruebas de integración de interfaz para puntero y táctil.** RF: RF-1, RF-2, RF-3, RF-5.  
+- [x] **T52. Añadir pruebas de integración de interfaz para puntero y táctil.** RF: RF-1, RF-2, RF-3, RF-5.  
   **Hecho cuando:** las pruebas verifican caricia, minijuego, indicadores, cola, música y reinicio desde la interfaz.
-- [ ] **T53. Ejecutar la matriz completa de pruebas especificada.** RF: RF-1 a RF-6.  
+- [x] **T53. Ejecutar la matriz completa de pruebas especificada.** RF: RF-1 a RF-6.  
   **Hecho cuando:** todas las suites de dominio, persistencia, sesión e interfaz pasan.
-- [ ] **T54. Ejecutar lint, comprobación de tipos y build de producción.** RF: RF-1 a RF-6.  
+- [x] **T54. Ejecutar lint, comprobación de tipos y build de producción.** RF: RF-1 a RF-6.  
   **Hecho cuando:** `pnpm lint` y `pnpm build` finalizan sin errores.
-- [ ] **T55. Revisar trazabilidad documental antes de cerrar.** RF: RF-1 a RF-6.  
+- [x] **T55. Revisar trazabilidad documental antes de cerrar.** RF: RF-1 a RF-6.  
   **Hecho cuando:** `spec.md`, `plan.md`, `tasks.md` y las pruebas reflejan el comportamiento finalmente entregado.
+
+  **Validación:** revisión completada el 2026-10-19. La especificación, el plan, las tareas y las 24 suites automatizadas (179 pruebas) cubren el comportamiento entregado de RF-1 a RF-6.
+
+## Corrección del canvas jugable
+
+- [x] **T56. Reproducir el fallo del canvas y registrar su causa en desarrollo.** RF: RF-1, RF-2.  
+  **Hecho cuando:** la consola de desarrollo identifica si el fallo procede de inicialización, dibujo o montaje, con pasos de reproducción registrados.
+
+  **Validación:** reproducción controlada completada el 2026-10-19. El rechazo de `Application.init()` impide el montaje y el dibujo; los pasos y la causa están registrados en `docs/diagnostico-canvas-desarrollo.md` y cubiertos por `pixiSceneLifecycle.test.ts`.
+- [x] **T57. Exponer los errores de inicialización de Pixi y conservar su limpieza segura.** RF: RF-1, RF-2.  
+  **Hecho cuando:** un rechazo de inicialización se registra en desarrollo, activa el estado de error de la escena y no deja aplicaciones, listeners ni temporizadores activos.
+
+  **Validación:** completada el 2026-10-19. `PixiScene` registra el rechazo en desarrollo y refleja el error en el estado de la escena; los ciclos de vida destruyen Pixi tanto tras un rechazo como al desmontar. El error observado en navegador está documentado en `docs/diagnostico-canvas-desarrollo.md`. Las pruebas de ciclo de vida y la suite completa pasan (181 pruebas).
+- [x] **T58. Reservar el área jugable y mostrar estados de carga y error en español.** RF: RF-1, RF-2.  
+  **Hecho cuando:** el contenedor conserva un área responsiva equivalente a 480 × 320 durante la carga y muestra una alternativa visible si Pixi no puede iniciarse.
+
+  **Validación:** completada el 2026-10-19. `PixiScene` reserva una proporción responsiva de 480 × 320, muestra los estados de carga y error en español y mantiene disponibles los controles de Mochi ante un fallo. `pixiScenePresentation.test.ts` cubre la proporción y los mensajes; la suite completa pasa (185 pruebas).
+- [x] **T59. Aplicar la corrección mínima a la inicialización o al dibujo de Pixi identificada en T56.** RF: RF-1, RF-2.  
+  **Hecho cuando:** en un navegador compatible se muestran la habitación y Mochi, y el canvas se adjunta una sola vez tras la inicialización.
+
+  **Validación:** completada el 2026-10-19. El ciclo de escena único difiere la destrucción de Pixi hasta que termina `Application.init()`, compone habitación y Mochi antes de adjuntar el canvas y nunca adjunta una aplicación destruida. `pixiSceneLifecycle.test.ts` comprueba el desmontaje durante la inicialización y que la limpieza tras un fallo no vuelva a leer el canvas destruido.
+- [x] **T60. Añadir pruebas unitarias de los estados de ciclo de vida, carga y error de la escena.** RF: RF-1, RF-2.  
+  **Hecho cuando:** las pruebas verifican adjuntar canvas, fallo de inicialización, fallback visible y limpieza al desmontar sin requerir un renderer real.
+
+  **Validación:** completada el 2026-10-19. `pixiSceneLifecycleStates.test.ts` comprueba las transiciones inactiva, cargando, lista y error, el adjunto y desmontaje del canvas, y el fallback en español con dobles sin renderer. La suite completa pasa (190 pruebas), al igual que lint y build.
+- [x] **T61. Solicitar y registrar la aprobación para añadir, si fuera necesaria, una herramienta de pruebas de DOM o navegador.** RF: RF-1, RF-2.  
+  **Hecho cuando:** antes de modificar dependencias, queda registrada la decisión de usar o no una herramienta adicional para validar el canvas real.
+
+  **Validación:** aprobada el 2026-10-19 por la persona usuaria la incorporación, si resulta necesaria, de una herramienta adicional de pruebas de DOM o navegador para validar el canvas real en T62. T61 no modifica dependencias ni añade pruebas; la herramienta concreta y su integración se decidirán e implementarán exclusivamente en T62.
+- [x] **T62. Añadir una prueba de integración del canvas en DOM o navegador, si fue aprobada en T61.** RF: RF-1, RF-2.  
+  **Hecho cuando:** la prueba comprueba que el montaje de `PixiScene` presenta canvas o fallback, y que el desmontaje elimina el canvas.
+
+  **Validación:** completada el 2026-10-19. Se añadió `jsdom`, aprobado en T61, y `PixiScene.dom.integration.test.tsx` monta `PixiScene` con un adaptador Pixi simulado, confirma que presenta un canvas y verifica que el desmontaje lo elimina. La suite completa pasa (191 pruebas), al igual que lint y build.
+- [x] **T63. Verificar manualmente canvas, puntero y táctil en desarrollo y producción.** RF: RF-1, RF-2.  
+  **Hecho cuando:** Mochi y la habitación son visibles, la caricia funciona con puntero y táctil, y no hay errores no controlados en consola.
+
+  **Validación:** completada el 2026-10-19 por la persona usuaria. Se verificaron manualmente el canvas, la visibilidad de Mochi y la habitación, la caricia mediante puntero y táctil, y la ausencia de errores no controlados en consola tanto en desarrollo como en producción.
+- [x] **T64. Ejecutar la validación automatizada y actualizar la trazabilidad de la corrección.** RF: RF-1, RF-2.  
+  **Hecho cuando:** `pnpm test`, `pnpm lint` y `pnpm build` finalizan sin errores y la documentación refleja las pruebas añadidas.
+
+  **Validación:** completada el 2026-10-19. `pnpm test --run` finalizó con 27 archivos y 191 pruebas correctas; `pnpm lint` y `pnpm build` finalizaron sin errores. `docs/diagnostico-canvas-desarrollo.md` traza las pruebas de ciclo de vida, presentación e integración DOM de la corrección.
+
+## Fidelidad visual del diseño de referencia
+
+- [x] **T65. Registrar la línea base visual y la matriz de comparación.** RF: RF-7.
+  **Hecho cuando:** se identifican como referencia normativa `drawMochi` y `drawRoomPattern` del commit `001a993`, y existe una matriz verificable para reposo, dormir, comer, triste, enfermo, sucio, partículas y minijuego.
+
+  **Validación:** completada el 2026-10-19. `docs/linea-base-visual-mochi.md` identifica la referencia normativa y contiene la matriz de comparación; `src/ui/pixi/visualBaseline.ts` la formaliza y `visualBaseline.test.ts` verifica su integridad. `pnpm test --run` finalizó con 28 archivos y 193 pruebas correctas; `pnpm lint` y `pnpm build` finalizaron sin errores.
+- [x] **T66. Trasladar la composición pixel art de Mochi y la habitación a PixiJS.** RF: RF-1, RF-7.
+  **Hecho cuando:** la escena de reposo reproduce las coordenadas, bloques escalonados, paleta, proporciones y composición de la referencia en el área lógica de 480 × 320, sin sustituir las piezas de Mochi por elipses genéricas.
+
+  **Validación:** completada el 2026-10-19. `restingScene.ts` traslada la pared decorada, ventana, planta, repisa, suelo, alfombra y la composición de Mochi de la referencia en 480 × 320 mediante bloques escalonados, con tres branquias por lado y sin elipses en las piezas de Mochi salvo la sombra de referencia. `restingScene.test.ts` cubre coordenadas, paleta y la ausencia de sustituciones elípticas. `pnpm test --run` finalizó con 28 archivos y 194 pruebas correctas; `pnpm lint` y `pnpm build` finalizaron sin errores (Vite informó únicamente el aviso no bloqueante de chunk superior a 500 kB).
+- [x] **T67. Trasladar las animaciones y variaciones visuales de referencia.** RF: RF-1, RF-6, RF-7.
+  **Hecho cuando:** balanceo, parpadeo, movimiento de branquias, dormir, comer, tristeza, enfermedad, suciedad, partículas y minijuego conservan el lenguaje pixel art y la identidad de Mochi de la referencia.
+
+  **Validación:** completada el 2026-10-19. La escena PixiJS calcula de forma determinista balanceo, parpadeo, movimiento de branquias y masticación; los estados de dormir, comer, tristeza, enfermedad y suciedad emplean bloques pixelados, y el minijuego usa a Mochi y corazones pixel art en la posición normativa de reposo. `restingScene.test.ts` y `minigameInteraction.test.ts` cubren las variaciones y el retorno del minijuego. `pnpm test --run` finalizó con 28 archivos y 197 pruebas correctas; `pnpm lint` y `pnpm build` finalizaron sin errores (Vite informó únicamente el aviso no bloqueante de chunk superior a 500 kB). Cubre RF-1, RF-6 y RF-7.
+- [x] **T68. Añadir verificaciones de regresión visual sin introducir dependencias no aprobadas.** RF: RF-7.
+  **Hecho cuando:** las pruebas automatizadas verifican la composición o las instrucciones de dibujo deterministas de cada estado y, si hiciera falta una herramienta de captura visual adicional, su aprobación se solicita y registra antes de modificar dependencias.
+
+  **Validación:** completada el 2026-10-19. `visualRegression.test.ts` verifica las instrucciones pixeladas de los estados normal, dormir, comer, triste, enfermo y sucio, además de la composición determinista del minijuego. `createMinigameSceneInstructions` separa dichas instrucciones del renderer para hacerlas comprobables. No se añadieron dependencias. `pnpm test --run` finalizó con 29 archivos y 204 pruebas correctas; `pnpm lint` finalizó sin errores y `pnpm build` finalizó correctamente (solo informó el aviso no bloqueante de Vite sobre un chunk mayor de 500 kB).
+- [x] **T69. Validar manualmente la fidelidad visual en desarrollo y producción.** RF: RF-7.
+  **Hecho cuando:** se compara la matriz de T65 contra la escena PixiJS en ambos entornos y se confirma que no hay diferencias reconocibles de silueta, estilo, proporciones, composición o animación.
+
+  **Validación:** completada el 2026-10-19. Se comparó la escena PixiJS en desarrollo y producción con la matriz de `docs/linea-base-visual-mochi.md`. La caricia activa durante 600 ms el rebote `playing` de la referencia, con `abs(sin(t × 0.012)) × 14`; el balanceo normal, la sombra fija y las branquias desfasadas conservan los valores de `drawMochi` en `001a993`. `restingScene.test.ts` y `petInteraction.test.ts` cubren el rebote y su activación. La suite completa, lint y build finalizan correctamente. Cubre RF-7.
+
+
+
+- [x] **T70. Ejecutar la validación final y actualizar la trazabilidad.** RF: RF-1, RF-6, RF-7.
+  **Hecho cuando:** las pruebas aplicables, `pnpm lint` y `pnpm build` finalizan sin errores, y la especificación, las tareas y las pruebas describen la fidelidad visual finalmente entregada.
+
+  **Validación:** completada el 2026-10-19. La especificación documenta RF-7 y su criterio de fidelidad visual; `docs/linea-base-visual-mochi.md` y las pruebas `visualBaseline.test.ts`, `visualRegression.test.ts`, `restingScene.test.ts`, `petInteraction.test.ts` y `minigameInteraction.test.ts` trazan la referencia `001a993`, los estados visuales, el rebote de caricia y el minijuego. `pnpm test --run` finalizó con 29 archivos y 207 pruebas correctas; `pnpm lint` finalizó sin errores y `pnpm build` finalizó correctamente. Vite informó únicamente el aviso no bloqueante de un chunk superior a 500 kB. Cubre RF-1, RF-6 y RF-7.
