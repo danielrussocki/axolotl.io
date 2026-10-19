@@ -22,6 +22,26 @@ describe('createPixiApplicationLifecycle', () => {
     expect(destroy).toHaveBeenCalledOnce()
   })
 
+  it('prepara la escena antes de permitir que una limpieza pendiente destruya Pixi', async () => {
+    let completeInitialization: (() => void) | undefined
+    const initialize = vi.fn(() => new Promise<void>((resolve) => {
+      completeInitialization = resolve
+    }))
+    const prepareScene = vi.fn()
+    const destroy = vi.fn()
+    const lifecycle = createPixiApplicationLifecycle({ initialize, prepareScene, destroy })
+
+    const initialization = lifecycle.initialize()
+    lifecycle.destroy()
+    completeInitialization?.()
+
+    await initialization
+
+    expect(prepareScene).toHaveBeenCalledOnce()
+    expect(destroy).toHaveBeenCalledOnce()
+    expect(prepareScene).toHaveBeenCalledBefore(destroy)
+  })
+
   it('no destruye una aplicación Pixi más de una vez', async () => {
     const destroy = vi.fn()
     const lifecycle = createPixiApplicationLifecycle({
@@ -32,6 +52,19 @@ describe('createPixiApplicationLifecycle', () => {
     await lifecycle.initialize()
     lifecycle.destroy()
     lifecycle.destroy()
+
+    expect(destroy).toHaveBeenCalledOnce()
+  })
+
+  it('destruye Pixi si la inicialización falla', async () => {
+    const initializationError = new Error('No se pudo crear el renderer de Pixi')
+    const destroy = vi.fn()
+    const lifecycle = createPixiApplicationLifecycle({
+      initialize: vi.fn<() => Promise<void>>().mockRejectedValue(initializationError),
+      destroy,
+    })
+
+    await expect(lifecycle.initialize()).rejects.toBe(initializationError)
 
     expect(destroy).toHaveBeenCalledOnce()
   })

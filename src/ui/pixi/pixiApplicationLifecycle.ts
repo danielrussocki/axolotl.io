@@ -1,5 +1,6 @@
 export interface PixiApplicationLifecycleOptions {
   initialize: () => Promise<void>
+  prepareScene?: () => void
   destroy: () => void
 }
 
@@ -15,14 +16,15 @@ export interface PixiApplicationLifecycle {
  */
 export const createPixiApplicationLifecycle = ({
   initialize,
+  prepareScene,
   destroy,
 }: PixiApplicationLifecycleOptions): PixiApplicationLifecycle => {
   let isInitialized = false
   let isDestroyRequested = false
   let isDestroyed = false
 
-  const destroyWhenReady = () => {
-    if (!isInitialized || isDestroyed) {
+  const destroyOnce = () => {
+    if (isDestroyed) {
       return
     }
 
@@ -30,9 +32,23 @@ export const createPixiApplicationLifecycle = ({
     destroy()
   }
 
+  const destroyWhenReady = () => {
+    if (!isInitialized) {
+      return
+    }
+
+    destroyOnce()
+  }
+
   return {
     initialize: async () => {
-      await initialize()
+      try {
+        await initialize()
+        prepareScene?.()
+      } catch (error) {
+        destroyOnce()
+        throw error
+      }
       isInitialized = true
       destroyWhenReady()
       return !isDestroyRequested

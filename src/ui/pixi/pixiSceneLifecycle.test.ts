@@ -21,7 +21,7 @@ function createHost(): SceneHost & { appendedViews: unknown[]; removedViews: unk
   }
 }
 
-function createApplication(view: unknown) {
+function createApplication(view: unknown | null) {
   return {
     canvas: view,
     initialize: vi.fn<() => Promise<void>>().mockResolvedValue(undefined),
@@ -69,10 +69,45 @@ describe('createPixiSceneLifecycle', () => {
 
     const startPromise = lifecycle.start()
     lifecycle.destroy()
+
+    expect(application.destroy).not.toHaveBeenCalled()
+
     finishInitialization?.()
     await startPromise
 
     expect(host.appendedViews).toEqual([])
     expect(application.destroy).toHaveBeenCalledOnce()
+  })
+
+  it('no adjunta una escena que terminó sin canvas', async () => {
+    const host = createHost()
+    const application = createApplication(null)
+    const lifecycle = createPixiSceneLifecycle(host, () => application)
+
+    const started = await lifecycle.start()
+
+    expect(started).toBe(false)
+    expect(host.appendedViews).toEqual([])
+    expect(lifecycle.getState()).toBe('error')
+  })
+
+  it('reproduce un fallo de inicialización sin llegar al montaje ni al dibujo', async () => {
+    const host = createHost()
+    const initializationError = new Error('No se pudo crear el renderer de Pixi')
+    const application = createApplication({})
+    Object.defineProperty(application, 'canvas', {
+      get: () => {
+        throw new Error('El canvas ya no está disponible')
+      },
+    })
+    application.initialize.mockRejectedValue(initializationError)
+    const lifecycle = createPixiSceneLifecycle(host, () => application)
+
+    await expect(lifecycle.start()).rejects.toBe(initializationError)
+    lifecycle.destroy()
+
+    expect(host.appendedViews).toEqual([])
+    expect(application.destroy).toHaveBeenCalledOnce()
+    expect(lifecycle.getState()).toBe('error')
   })
 })

@@ -187,7 +187,7 @@ export default function App() {
         {snapshot.notifications.length > 0 ? (
           <section className="mt-3 space-y-2" aria-label="Avisos de recuperación">
             {snapshot.notifications.map((notification, index) => (
-              <p key={`${notification}-${index}`} role="alert" className="rounded-[16px] border-2 border-[#ff9eb8] bg-[#fff0f5] px-4 py-3 text-sm font-bold text-[#c44061]">
+              <p key={`${notification}-${index}`} role="alert" className="rounded-2xl border-2 border-[#ff9eb8] bg-[#fff0f5] px-4 py-3 text-sm font-bold text-[#c44061]">
                 {notification}
               </p>
             ))}

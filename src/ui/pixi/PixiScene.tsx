@@ -1,5 +1,5 @@
 import { Application, Container, Rectangle } from 'pixi.js'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import type { ActionCommand } from '../../application/contracts'
 import {
@@ -7,7 +7,6 @@ import {
   type PixiApplicationLike,
 } from './pixiSceneLifecycle'
 import { bindPetInteraction } from './petInteraction'
-import { createPixiApplicationLifecycle } from './pixiApplicationLifecycle'
 import { createMochiPointerTarget, drawRestingScene } from './restingScene'
 import {
   advanceMinigameVisualState,
@@ -16,6 +15,10 @@ import {
   type MinigameVisualState,
 } from './minigameInteraction'
 import { drawMinigameResult, drawMinigameScene } from './minigameVisualScene'
+import {
+  getPixiSceneStatusMessage,
+  playableAreaAspectRatio,
+} from './pixiScenePresentation'
 import type { MinigameState, PetVisualState } from '../../domain/contracts'
 
 export interface PixiSceneProps {
@@ -47,26 +50,6 @@ function createApplication(
   let isFinishing = false
   let resultTimeout: ReturnType<typeof setTimeout> | undefined
   let renderedVisualState: PetVisualState | null = null
-
-  const lifecycle = createPixiApplicationLifecycle({
-    initialize: () => application.init({
-      antialias: false,
-      backgroundAlpha: 0,
-      height: 320,
-      width: 480,
-    }),
-    destroy: () => {
-      application.ticker.remove(updateMinigame)
-      if (resultTimeout !== undefined) {
-        clearTimeout(resultTimeout)
-      }
-      releasePetInteraction?.()
-      application.destroy(
-        { removeView: false },
-        { children: true, texture: true, textureSource: true },
-      )
-    },
-  })
 
   const renderRestingScene = () => {
     if (!sceneContent) {
@@ -141,9 +124,12 @@ function createApplication(
       return application.canvas
     },
     initialize: async () => {
-      if (!await lifecycle.initialize()) {
-        return
-      }
+      await application.init({
+      antialias: false,
+      backgroundAlpha: 0,
+      height: 320,
+      width: 480,
+      })
       sceneContent = new Container()
       application.stage.addChild(sceneContent)
       renderRestingScene()
@@ -162,7 +148,17 @@ function createApplication(
       })
       application.ticker.add(updateMinigame)
     },
-    destroy: lifecycle.destroy,
+    destroy: () => {
+      application.ticker.remove(updateMinigame)
+      if (resultTimeout !== undefined) {
+        clearTimeout(resultTimeout)
+      }
+      releasePetInteraction?.()
+      application.destroy(
+        { removeView: false },
+        { children: true, texture: true, textureSource: true },
+      )
+    },
   }
 }
 
@@ -175,12 +171,15 @@ export function PixiScene({
   getPetVisualState = getNormalPetVisualState,
 }: PixiSceneProps) {
   const hostRef = useRef<HTMLDivElement>(null)
+  const [sceneState, setSceneState] = useState<'loading' | 'ready' | 'error'>('loading')
 
   useEffect(() => {
     const host = hostRef.current
     if (!host) {
       return
     }
+
+    setSceneState('loading')
 
     const lifecycle = createPixiSceneLifecycle(
       {
@@ -200,14 +199,51 @@ export function PixiScene({
         getPetVisualState,
       ),
     )
-    void lifecycle.start().catch(() => {
-      lifecycle.destroy()
-    })
+    let isMounted = true
+    void lifecycle.start()
+      .then((started) => {
+        if (isMounted) {
+          setSceneState(started ? 'ready' : 'error')
+        }
+      })
+      .catch((error: unknown) => {
+        if (import.meta.env.DEV) {
+          console.error('No se pudo inicializar la escena de Pixi.', error)
+        }
+        if (isMounted && lifecycle.getState() === 'error') {
+          setSceneState('error')
+        }
+        lifecycle.destroy()
+      })
 
     return () => {
+      isMounted = false
       lifecycle.destroy()
     }
   }, [getActiveMinigame, getPetVisualState, isMinigameActive, onCommand, onHeartCaptured, onMinigameFinished])
 
-  return <div ref={hostRef} aria-label="Escena jugable de Mochi" />
+  const statusMessage = getPixiSceneStatusMessage(sceneState)
+
+  return (
+    <div
+      aria-busy={sceneState === 'loading'}
+      aria-label="Escena jugable de Mochi"
+      className="relative w-full overflow-hidden bg-[#fff0f5]"
+      data-initialization-error={sceneState === 'error' || undefined}
+      data-scene-state={sceneState}
+      role="region"
+      style={{ aspectRatio: playableAreaAspectRatio }}
+    >
+      <div ref={hostRef} className="pixi-scene-host size-full" />
+      {statusMessage === null ? null : (
+        <p
+          aria-live="polite"
+          className="absolute inset-0 grid place-items-center px-6 text-center text-sm font-bold text-[#8a5a6e]"
+          role={sceneState === 'error' ? 'alert' : 'status'}
+        >
+          {statusMessage}
+        </p>
+      )}
+    </div>
+  )
 }
