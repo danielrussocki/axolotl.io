@@ -180,3 +180,33 @@ Las tareas están ordenadas por dependencia. Cada una está pensada para complet
   **Hecho cuando:** `pnpm test`, `pnpm lint` y `pnpm build` finalizan sin errores y la documentación refleja las pruebas añadidas.
 
   **Validación:** completada el 2026-10-19. `pnpm test --run` finalizó con 27 archivos y 191 pruebas correctas; `pnpm lint` y `pnpm build` finalizaron sin errores. `docs/diagnostico-canvas-desarrollo.md` traza las pruebas de ciclo de vida, presentación e integración DOM de la corrección.
+
+## Fidelidad visual del diseño de referencia
+
+- [x] **T65. Registrar la línea base visual y la matriz de comparación.** RF: RF-7.
+  **Hecho cuando:** se identifican como referencia normativa `drawMochi` y `drawRoomPattern` del commit `001a993`, y existe una matriz verificable para reposo, dormir, comer, triste, enfermo, sucio, partículas y minijuego.
+
+  **Validación:** completada el 2026-10-19. `docs/linea-base-visual-mochi.md` identifica la referencia normativa y contiene la matriz de comparación; `src/ui/pixi/visualBaseline.ts` la formaliza y `visualBaseline.test.ts` verifica su integridad. `pnpm test --run` finalizó con 28 archivos y 193 pruebas correctas; `pnpm lint` y `pnpm build` finalizaron sin errores.
+- [x] **T66. Trasladar la composición pixel art de Mochi y la habitación a PixiJS.** RF: RF-1, RF-7.
+  **Hecho cuando:** la escena de reposo reproduce las coordenadas, bloques escalonados, paleta, proporciones y composición de la referencia en el área lógica de 480 × 320, sin sustituir las piezas de Mochi por elipses genéricas.
+
+  **Validación:** completada el 2026-10-19. `restingScene.ts` traslada la pared decorada, ventana, planta, repisa, suelo, alfombra y la composición de Mochi de la referencia en 480 × 320 mediante bloques escalonados, con tres branquias por lado y sin elipses en las piezas de Mochi salvo la sombra de referencia. `restingScene.test.ts` cubre coordenadas, paleta y la ausencia de sustituciones elípticas. `pnpm test --run` finalizó con 28 archivos y 194 pruebas correctas; `pnpm lint` y `pnpm build` finalizaron sin errores (Vite informó únicamente el aviso no bloqueante de chunk superior a 500 kB).
+- [x] **T67. Trasladar las animaciones y variaciones visuales de referencia.** RF: RF-1, RF-6, RF-7.
+  **Hecho cuando:** balanceo, parpadeo, movimiento de branquias, dormir, comer, tristeza, enfermedad, suciedad, partículas y minijuego conservan el lenguaje pixel art y la identidad de Mochi de la referencia.
+
+  **Validación:** completada el 2026-10-19. La escena PixiJS calcula de forma determinista balanceo, parpadeo, movimiento de branquias y masticación; los estados de dormir, comer, tristeza, enfermedad y suciedad emplean bloques pixelados, y el minijuego usa a Mochi y corazones pixel art en la posición normativa de reposo. `restingScene.test.ts` y `minigameInteraction.test.ts` cubren las variaciones y el retorno del minijuego. `pnpm test --run` finalizó con 28 archivos y 197 pruebas correctas; `pnpm lint` y `pnpm build` finalizaron sin errores (Vite informó únicamente el aviso no bloqueante de chunk superior a 500 kB). Cubre RF-1, RF-6 y RF-7.
+- [x] **T68. Añadir verificaciones de regresión visual sin introducir dependencias no aprobadas.** RF: RF-7.
+  **Hecho cuando:** las pruebas automatizadas verifican la composición o las instrucciones de dibujo deterministas de cada estado y, si hiciera falta una herramienta de captura visual adicional, su aprobación se solicita y registra antes de modificar dependencias.
+
+  **Validación:** completada el 2026-10-19. `visualRegression.test.ts` verifica las instrucciones pixeladas de los estados normal, dormir, comer, triste, enfermo y sucio, además de la composición determinista del minijuego. `createMinigameSceneInstructions` separa dichas instrucciones del renderer para hacerlas comprobables. No se añadieron dependencias. `pnpm test --run` finalizó con 29 archivos y 204 pruebas correctas; `pnpm lint` finalizó sin errores y `pnpm build` finalizó correctamente (solo informó el aviso no bloqueante de Vite sobre un chunk mayor de 500 kB).
+- [x] **T69. Validar manualmente la fidelidad visual en desarrollo y producción.** RF: RF-7.
+  **Hecho cuando:** se compara la matriz de T65 contra la escena PixiJS en ambos entornos y se confirma que no hay diferencias reconocibles de silueta, estilo, proporciones, composición o animación.
+
+  **Validación:** completada el 2026-10-19. Se comparó la escena PixiJS en desarrollo y producción con la matriz de `docs/linea-base-visual-mochi.md`. La caricia activa durante 600 ms el rebote `playing` de la referencia, con `abs(sin(t × 0.012)) × 14`; el balanceo normal, la sombra fija y las branquias desfasadas conservan los valores de `drawMochi` en `001a993`. `restingScene.test.ts` y `petInteraction.test.ts` cubren el rebote y su activación. La suite completa, lint y build finalizan correctamente. Cubre RF-7.
+
+
+
+- [x] **T70. Ejecutar la validación final y actualizar la trazabilidad.** RF: RF-1, RF-6, RF-7.
+  **Hecho cuando:** las pruebas aplicables, `pnpm lint` y `pnpm build` finalizan sin errores, y la especificación, las tareas y las pruebas describen la fidelidad visual finalmente entregada.
+
+  **Validación:** completada el 2026-10-19. La especificación documenta RF-7 y su criterio de fidelidad visual; `docs/linea-base-visual-mochi.md` y las pruebas `visualBaseline.test.ts`, `visualRegression.test.ts`, `restingScene.test.ts`, `petInteraction.test.ts` y `minigameInteraction.test.ts` trazan la referencia `001a993`, los estados visuales, el rebote de caricia y el minijuego. `pnpm test --run` finalizó con 29 archivos y 207 pruebas correctas; `pnpm lint` finalizó sin errores y `pnpm build` finalizó correctamente. Vite informó únicamente el aviso no bloqueante de un chunk superior a 500 kB. Cubre RF-1, RF-6 y RF-7.

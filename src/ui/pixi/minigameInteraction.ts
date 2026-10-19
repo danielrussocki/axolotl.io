@@ -20,7 +20,7 @@ export interface MinigameAdvanceResult {
   capturedHeartIds: string[]
 }
 
-export const restingMochiPosition: ScenePoint = { x: 240, y: 174 }
+export const restingMochiPosition: ScenePoint = { x: 240, y: 160 }
 
 const playableBounds = { minX: 36, maxX: 444, minY: 70, maxY: 240 }
 const heartSpawnIntervalMs = 450

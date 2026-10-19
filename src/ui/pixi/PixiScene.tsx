@@ -50,15 +50,16 @@ function createApplication(
   let isFinishing = false
   let resultTimeout: ReturnType<typeof setTimeout> | undefined
   let renderedVisualState: PetVisualState | null = null
+  let petAnimationEndsAtMs = 0
 
-  const renderRestingScene = () => {
+  const renderRestingScene = (timeMs = 0) => {
     if (!sceneContent) {
       return
     }
 
     sceneContent.removeChildren().forEach((child) => child.destroy())
     renderedVisualState = getPetVisualState()
-    drawRestingScene(sceneContent, renderedVisualState)
+    drawRestingScene(sceneContent, renderedVisualState, true, timeMs, timeMs < petAnimationEndsAtMs)
   }
 
   const renderMinigame = () => {
@@ -77,15 +78,15 @@ function createApplication(
     minigameStartedAtMs = null
     resultTimeout = setTimeout(() => {
       resultTimeout = undefined
-      renderRestingScene()
+      renderRestingScene(Date.now())
     }, 1_800)
   }
 
   const updateMinigame = () => {
     const minigame = getActiveMinigame()
     if (minigame === null) {
-      if (visualState === null && renderedVisualState !== getPetVisualState()) {
-        renderRestingScene()
+      if (visualState === null) {
+        renderRestingScene(Date.now())
       }
       return
     }
@@ -132,11 +133,14 @@ function createApplication(
       })
       sceneContent = new Container()
       application.stage.addChild(sceneContent)
-      renderRestingScene()
+      renderRestingScene(Date.now())
       const petTarget = createMochiPointerTarget(application.stage)
       releasePetInteraction = bindPetInteraction(petTarget, {
         dispatch: onCommand,
         isMinigameActive,
+        onPetRequested: () => {
+          petAnimationEndsAtMs = Date.now() + 600
+        },
       })
       application.stage.eventMode = 'static'
       application.stage.hitArea = new Rectangle(0, 0, 480, 320)
