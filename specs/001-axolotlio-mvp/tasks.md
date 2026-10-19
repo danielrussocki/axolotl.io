@@ -131,11 +131,13 @@ Las tareas están ordenadas por dependencia. Cada una está pensada para complet
 
 ## Verificación final
 
-- [ ] **T52. Añadir pruebas de integración de interfaz para puntero y táctil.** RF: RF-1, RF-2, RF-3, RF-5.  
+- [x] **T52. Añadir pruebas de integración de interfaz para puntero y táctil.** RF: RF-1, RF-2, RF-3, RF-5.  
   **Hecho cuando:** las pruebas verifican caricia, minijuego, indicadores, cola, música y reinicio desde la interfaz.
-- [ ] **T53. Ejecutar la matriz completa de pruebas especificada.** RF: RF-1 a RF-6.  
+- [x] **T53. Ejecutar la matriz completa de pruebas especificada.** RF: RF-1 a RF-6.  
   **Hecho cuando:** todas las suites de dominio, persistencia, sesión e interfaz pasan.
-- [ ] **T54. Ejecutar lint, comprobación de tipos y build de producción.** RF: RF-1 a RF-6.  
+- [x] **T54. Ejecutar lint, comprobación de tipos y build de producción.** RF: RF-1 a RF-6.  
   **Hecho cuando:** `pnpm lint` y `pnpm build` finalizan sin errores.
-- [ ] **T55. Revisar trazabilidad documental antes de cerrar.** RF: RF-1 a RF-6.  
+- [x] **T55. Revisar trazabilidad documental antes de cerrar.** RF: RF-1 a RF-6.  
   **Hecho cuando:** `spec.md`, `plan.md`, `tasks.md` y las pruebas reflejan el comportamiento finalmente entregado.
+
+  **Validación:** revisión completada el 2026-10-19. La especificación, el plan, las tareas y las 24 suites automatizadas (179 pruebas) cubren el comportamiento entregado de RF-1 a RF-6.
