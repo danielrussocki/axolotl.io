@@ -116,17 +116,17 @@ Las tareas están ordenadas por dependencia. Cada una está pensada para complet
 
 ## Interfaz reactiva
 
-- [ ] **T46. Sustituir la integración actual por el estado del controlador.** RF: RF-1, RF-3.  
+- [x] **T46. Sustituir la integración actual por el estado del controlador.** RF: RF-1, RF-3.  
   **Hecho cuando:** controles, indicadores y mensaje muestran la instantánea reactiva del juego sin duplicar reglas.
-- [ ] **T47. Implementar indicadores y resaltado de necesidades bajas.** RF: RF-3.  
+- [x] **T47. Implementar indicadores y resaltado de necesidades bajas.** RF: RF-3.  
   **Hecho cuando:** cada necesidad igual o menor que 20 resalta su indicador y el control asociado correcto.
-- [ ] **T48. Implementar controles de acciones y de música.** RF: RF-1, RF-3.  
+- [x] **T48. Implementar controles de acciones y de música.** RF: RF-1, RF-3.  
   **Hecho cuando:** cada control emite un único comando y el control de música respeta la elección durante la sesión.
-- [ ] **T49. Implementar lista, visibilidad y configuración de cola.** RF: RF-1, RF-4.  
+- [x] **T49. Implementar lista, visibilidad y configuración de cola.** RF: RF-1, RF-4.  
   **Hecho cuando:** la lista inicia visible, muestra tipo y estado de cada acción, puede ocultarse sin detenerse y conserva preferencia y límite.
-- [ ] **T50. Implementar diálogo y controles de reinicio.** RF: RF-5, RF-6.  
+- [x] **T50. Implementar diálogo y controles de reinicio.** RF: RF-5, RF-6.  
   **Hecho cuando:** el diálogo permite cancelar, reiniciar borrando cola o reiniciar conservándola.
-- [ ] **T51. Implementar pantalla de sesión bloqueada y avisos de recuperación.** RF: RF-3, RF-4.  
+- [x] **T51. Implementar pantalla de sesión bloqueada y avisos de recuperación.** RF: RF-3, RF-4.  
   **Hecho cuando:** la segunda pestaña no permite jugar y los avisos de datos/guardado se muestran en español.
 
 ## Verificación final

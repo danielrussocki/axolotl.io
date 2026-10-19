@@ -7,6 +7,7 @@ import {
   type PixiApplicationLike,
 } from './pixiSceneLifecycle'
 import { bindPetInteraction } from './petInteraction'
+import { createPixiApplicationLifecycle } from './pixiApplicationLifecycle'
 import { createMochiPointerTarget, drawRestingScene } from './restingScene'
 import {
   advanceMinigameVisualState,
@@ -15,7 +16,7 @@ import {
   type MinigameVisualState,
 } from './minigameInteraction'
 import { drawMinigameResult, drawMinigameScene } from './minigameVisualScene'
-import type { MinigameState } from '../../domain/contracts'
+import type { MinigameState, PetVisualState } from '../../domain/contracts'
 
 export interface PixiSceneProps {
   onCommand: (command: ActionCommand) => void | Promise<unknown>
@@ -23,9 +24,11 @@ export interface PixiSceneProps {
   getActiveMinigame?: () => MinigameState | null
   onHeartCaptured?: () => void | Promise<unknown>
   onMinigameFinished?: () => void | Promise<unknown>
+  getPetVisualState?: () => PetVisualState
 }
 
 const isMinigameInactive = () => false
+const getNormalPetVisualState = (): PetVisualState => 'normal'
 
 function createApplication(
   onCommand: PixiSceneProps['onCommand'],
@@ -33,6 +36,7 @@ function createApplication(
   getActiveMinigame: () => MinigameState | null,
   onHeartCaptured: () => void | Promise<unknown>,
   onMinigameFinished: () => void | Promise<unknown>,
+  getPetVisualState: () => PetVisualState,
 ): PixiApplicationLike {
   const application = new Application()
   let releasePetInteraction: (() => void) | undefined
@@ -42,6 +46,27 @@ function createApplication(
   let capturedHearts = 0
   let isFinishing = false
   let resultTimeout: ReturnType<typeof setTimeout> | undefined
+  let renderedVisualState: PetVisualState | null = null
+
+  const lifecycle = createPixiApplicationLifecycle({
+    initialize: () => application.init({
+      antialias: false,
+      backgroundAlpha: 0,
+      height: 320,
+      width: 480,
+    }),
+    destroy: () => {
+      application.ticker.remove(updateMinigame)
+      if (resultTimeout !== undefined) {
+        clearTimeout(resultTimeout)
+      }
+      releasePetInteraction?.()
+      application.destroy(
+        { removeView: false },
+        { children: true, texture: true, textureSource: true },
+      )
+    },
+  })
 
   const renderRestingScene = () => {
     if (!sceneContent) {
@@ -49,7 +74,8 @@ function createApplication(
     }
 
     sceneContent.removeChildren().forEach((child) => child.destroy())
-    drawRestingScene(sceneContent)
+    renderedVisualState = getPetVisualState()
+    drawRestingScene(sceneContent, renderedVisualState)
   }
 
   const renderMinigame = () => {
@@ -75,6 +101,9 @@ function createApplication(
   const updateMinigame = () => {
     const minigame = getActiveMinigame()
     if (minigame === null) {
+      if (visualState === null && renderedVisualState !== getPetVisualState()) {
+        renderRestingScene()
+      }
       return
     }
 
@@ -112,12 +141,9 @@ function createApplication(
       return application.canvas
     },
     initialize: async () => {
-      await application.init({
-        antialias: false,
-        backgroundAlpha: 0,
-        height: 320,
-        width: 480,
-      })
+      if (!await lifecycle.initialize()) {
+        return
+      }
       sceneContent = new Container()
       application.stage.addChild(sceneContent)
       renderRestingScene()
@@ -136,18 +162,7 @@ function createApplication(
       })
       application.ticker.add(updateMinigame)
     },
-    destroy: () => {
-      application.ticker.remove(updateMinigame)
-      if (resultTimeout !== undefined) {
-        clearTimeout(resultTimeout)
-      }
-      releasePetInteraction?.()
-      application.destroy(true, {
-        children: true,
-        texture: true,
-        textureSource: true,
-      })
-    },
+    destroy: lifecycle.destroy,
   }
 }
 
@@ -157,6 +172,7 @@ export function PixiScene({
   getActiveMinigame = () => null,
   onHeartCaptured = () => undefined,
   onMinigameFinished = () => undefined,
+  getPetVisualState = getNormalPetVisualState,
 }: PixiSceneProps) {
   const hostRef = useRef<HTMLDivElement>(null)
 
@@ -181,6 +197,7 @@ export function PixiScene({
         getActiveMinigame,
         onHeartCaptured,
         onMinigameFinished,
+        getPetVisualState,
       ),
     )
     void lifecycle.start().catch(() => {
@@ -190,7 +207,7 @@ export function PixiScene({
     return () => {
       lifecycle.destroy()
     }
-  }, [getActiveMinigame, isMinigameActive, onCommand, onHeartCaptured, onMinigameFinished])
+  }, [getActiveMinigame, getPetVisualState, isMinigameActive, onCommand, onHeartCaptured, onMinigameFinished])
 
   return <div ref={hostRef} aria-label="Escena jugable de Mochi" />
 }
